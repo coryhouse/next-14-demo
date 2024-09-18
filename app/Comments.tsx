@@ -1,13 +1,21 @@
 import { use } from "react";
-import { Comment } from "./page";
+import { Comment } from "./types";
 
 interface CommentsProps {
-  commentsPromise: Promise<Comment[]>;
+  productId: number;
 }
 
-export function Comments({ commentsPromise }: Readonly<CommentsProps>) {
+async function getProductComments(productId: number) {
+  return new Promise<Comment[]>((resolve) => {
+    setTimeout(() => {
+      resolve([{ id: 1, comment: "Comment 1" }]);
+    }, 2000);
+  });
+}
+
+export function Comments({ productId }: Readonly<CommentsProps>) {
   // Suspends until the promise resolves
-  const comments = use(commentsPromise);
+  const comments = use(getProductComments(productId));
 
   return (
     <ul>

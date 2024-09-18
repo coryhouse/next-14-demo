@@ -1,19 +1,23 @@
 import { use } from "react";
-import { Comment } from "./page";
+import { Comment } from "./types";
 
 interface CommentsProps {
-  commentsPromise: Promise<Comment[]>;
+  commentsPromise: Promise<Response>;
 }
 
 export function Comments({ commentsPromise }: Readonly<CommentsProps>) {
   // Suspends until the promise resolves
-  const comments = use(commentsPromise);
+  const commentsResponse = use(commentsPromise);
+  const comments = use(commentsResponse.json()) as Comment[];
 
   return (
-    <ul>
-      {comments.map(({ id, comment }) => (
-        <li key={id}>{comment}</li>
-      ))}
-    </ul>
+    <>
+      <h2>Comments</h2>
+      <ul>
+        {comments.map(({ id, body }) => (
+          <li key={id}>{body}</li>
+        ))}
+      </ul>
+    </>
   );
 }

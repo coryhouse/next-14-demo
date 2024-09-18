@@ -1,42 +1,22 @@
 import { Suspense } from "react";
 import { Comments } from "./Comments";
-
-interface Product {
-  id: number;
-  name: string;
-}
-
-export interface Comment {
-  id: number;
-  comment: string;
-}
-
-async function getProductById(id: number) {
-  return new Promise<Product>((resolve) => {
-    setTimeout(() => {
-      resolve({ id: 1, name: "Product 1" });
-    }, 2000);
-  });
-}
-
-async function getProductComments(productId: number) {
-  return new Promise<Comment[]>((resolve) => {
-    setTimeout(() => {
-      resolve([{ id: 1, comment: "Comment 1" }]);
-    }, 2000);
-  });
-}
+import { Post } from "./types";
 
 export default async function Home() {
   // Awaited, so will wait for the promise to resolve
-  const product = await getProductById(1);
+  const postResponse = await fetch("http://localhost:3001/posts/1", {
+    cache: "no-store",
+  });
+  const post = (await postResponse.json()) as Post;
 
-  // Not awaited, so will not wait for the promise to resolve
-  const commentsPromise = getProductComments(product.id);
+  // Not awaited, so won't wait for the promise to resolve
+  const commentsPromise = fetch("http://localhost:3001/comments?postId=1", {
+    cache: "no-store",
+  });
 
   return (
     <>
-      <h1>{product.name}</h1>
+      <h1>{post.title}</h1>
       <Suspense fallback={<div>Loading comments...</div>}>
         <Comments commentsPromise={commentsPromise} />
       </Suspense>
